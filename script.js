@@ -34,9 +34,11 @@
   function saveNotes() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      return true;
     } catch (error) {
       console.error("QuickNotes could not save notes.", error);
       errorMessage.textContent = "Your notes could not be saved in this browser.";
+      return false;
     }
   }
 
@@ -63,7 +65,7 @@
 
     const text = document.createElement("p");
     text.className = "note-text";
-    // Use textContent so note text is always treated as text, never HTML.
+    // Treat user-supplied content as text, never HTML.
     text.textContent = note.text;
 
     const meta = document.createElement("div");
@@ -75,7 +77,6 @@
 
     const date = document.createElement("time");
     date.textContent = note.createdAt;
-    date.dateTime = note.createdAt;
 
     const deleteButton = document.createElement("button");
     deleteButton.className = "delete-button";
@@ -113,9 +114,7 @@
       return;
     }
 
-    visibleNotes.forEach((note) => {
-      notesList.appendChild(makeNoteCard(note));
-    });
+    visibleNotes.forEach((note) => notesList.appendChild(makeNoteCard(note)));
   }
 
   noteForm.addEventListener("submit", (event) => {
@@ -147,8 +146,8 @@
     };
 
     notes.unshift(note);
-    errorMessage.textContent = "";
     noteInput.value = "";
+    errorMessage.textContent = "";
     saveNotes();
     render();
     noteInput.focus();
